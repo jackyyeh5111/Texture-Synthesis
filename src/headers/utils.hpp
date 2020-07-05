@@ -2,6 +2,7 @@
 #define UTILS_DEF
 
 #include <vector>
+#include <string>
 
 /*******************/
 /*** Definitions ***/
@@ -26,6 +27,8 @@ typedef std::vector<VP> VVP;
 /********************/
 /*** Neighborhood ***/
 /********************/
+
+std::vector<std::string> get_file_list(const std::string& path);
 
 // fill N with the k-neighborhood of (x, y) in the map (S -> E) of size W*H
 // where E is a squared image of size m.

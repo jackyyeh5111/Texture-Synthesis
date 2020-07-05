@@ -1,6 +1,30 @@
 #include "utils.hpp"
 #include "stb_image_write.h"
 #include <cmath>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/filesystem.hpp>
+
+std::vector<std::string> get_file_list(const std::string& path)
+{
+    std::vector<std::string> m_file_list;
+    if (!path.empty()) {
+        namespace fs = boost::filesystem;
+
+        fs::path apk_path(path);
+        fs::recursive_directory_iterator end;
+
+        for (fs::recursive_directory_iterator i(apk_path); i != end; ++i)
+        {
+            const fs::path cp = (*i);
+            if (cp.string().find(".png")==std::string::npos) continue;
+            m_file_list.push_back(cp.string());
+        }
+    }
+    return m_file_list;
+}
 
 void getNeighb_S(int x, int y, int k, Pix* S, int W, int H, uchar* E, int m, VI &N) {
 	N.clear();

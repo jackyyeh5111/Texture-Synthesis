@@ -19,6 +19,9 @@ Pix* upsample(Pix* S, int W, int H, int h, int md) {
 	int W2 = W*2;
 	int h1 = floor(h*0.5);
 	int h2 = floor(md - double(h*0.5));
+	
+	std::cout << "md: " << md << " | " << "h1: " << h1 << " | " << "h2: " << h2 << '\n';
+
 	Pix ze = {h2, h2}, ri = {h1, h2}, up = {h2, h1}, di = {h1, h1};
 	for(int i = 0; i < W; i++) {
 		for(int j = 0; j < H; j++) {
@@ -168,6 +171,8 @@ Pix* synthesize(uchar* E, int m, VD &r, int c, double kappa, int W, int H,
 	int L;
 	init_variables(E, m, tor, file,
 					m2, E2, have_folder, folder, L);
+
+	std::cout << "m: " << m << " | " << "m2: " << m2 << '\n';
 	uchar* El = new uchar[3*m2*m2];
 
 	// Creation of S_0
@@ -177,6 +182,7 @@ Pix* synthesize(uchar* E, int m, VD &r, int c, double kappa, int W, int H,
 		jitter(S, W, H, m, m, r[0]);
 	
 	for(int l = 1; l <= L; l++) {
+
 		// footstep
 		int h = 1 << (L-l);
 
@@ -187,6 +193,7 @@ Pix* synthesize(uchar* E, int m, VD &r, int c, double kappa, int W, int H,
 		} else gauss(E2, El, h, m2, m2);
 
 		// Upsampling
+		std::cout << "W: " << W  << " | " << "H: " << H << '\n';
 		Pix* nS = upsample(S, W, H, h, m);
 		delete[] S;
 		S = nS;
@@ -201,6 +208,8 @@ Pix* synthesize(uchar* E, int m, VD &r, int c, double kappa, int W, int H,
 		if(l > 2 && c > 0) {
 			VVP C;
 			initCoherence(C, m);
+
+			// std::cout << "have_folder: " << std::to_string(have_folder) << '\n';
 			if(have_folder) {
 				sprintf(name, "%s/coherence_%d.png", folder, l);
 				struct stat buffer;
@@ -219,10 +228,11 @@ Pix* synthesize(uchar* E, int m, VD &r, int c, double kappa, int W, int H,
 		}
 
 		// Saving images
-		sprintf(name, "out_%d.png", l);
-		save(S, W, H, El, m2, name);
-		sprintf(name, "map_%d.png", l);
-		saveS(S, W, H, m, name);
+		// sprintf(name, "output/out_%d.png", l);
+		// save(S, W, H, El, m2, name);
+		// sprintf(name, "output/map_%d.png", l);
+		// saveS(S, W, H, m, name);
+		
 		// sprintf(name, "El_%d.png", l);
 		// stbi_write_png(name, m2, m2, 3, El, 0);
 	}
@@ -256,6 +266,11 @@ uchar* magnify(int ml, uchar* Eh, int mh, Pix* S, int W, int H, int &Wh, int &Hh
 	int mp = pow(2.0, ceil(log2(ml)));
 	int Wl = mp*W, Hl = mp*H;
 	Wh = (mh*Wl) / ml, Hh = (mh*Hl) / ml;
+
+	std::cout << "mp: " << mp << '\n';
+	std::cout << "Wl: " << Wl << " | Hl: " << Hl << '\n';
+	std::cout << "Wh: " << Wh << " | Hh: " << Hh << '\n';
+
 	uchar* res = new uchar[3*Wh*Hh];
 	double colors[2][2] = {{0, 0}, {0, 0}};
 	Pix u;
